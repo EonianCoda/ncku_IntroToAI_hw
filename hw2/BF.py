@@ -24,7 +24,6 @@ class BF(object):
         ans = [0] * self.num_worker
         busy = [False] * self.num_worker
         self._solve(ans, busy, 0, 0)
-        return self.best_ans
 
     def _solve(self, ans:list, busy:list, task_idx:int, cost:int):
         """Solve the problem

@@ -45,7 +45,7 @@ class Inversion_mutation(Mutation):
 class Swap_mutation(Mutation):
     def __call__(self, p1: int, c1: int, population: list):
         num_genes = len(population[0])
-        num_swap = 1
+        num_swap = 2
         # Copy parent
         for i in range(num_genes):
             population[c1][i] = population[p1][i]
