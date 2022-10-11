@@ -229,13 +229,13 @@ if __name__ == '__main__':
     # Read json files
     with open("input.json", 'r') as f:
         input_datas = json.load(f)
-    solver = GA(pop_size=100, 
-                iter_times=300,
+    solver = GA(pop_size=300, 
+                iter_times=500,
                 cross_ratio=0.2,
                 mut_ratio=0.1,
                 least_fitness_factor=0.3,
-                selection_method=Wheel_selection,
-                mut_method=Inversion_mutation,
+                selection_method=Deterministic_selection,
+                mut_method=Swap_mutation,
                 )
     for key, input in input_datas.items():
         problem = Problem(input)
