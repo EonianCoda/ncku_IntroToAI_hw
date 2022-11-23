@@ -45,7 +45,7 @@ def split_data(x, y, split_ratio = 0.9, seed=456):
 
     return (x_train, y_train), (x_test, y_test)
 
-class KNN_linear_regressor(object):
+class KNN_nonlinear_regressor(object):
     def __init__(self, n_neighbors:int=10):
         self.n_neighbors = n_neighbors
         self.x = None
@@ -64,32 +64,31 @@ class KNN_linear_regressor(object):
         neighbors_indices = min_indices[:,:self.n_neighbors]
         result = []
         for i, indices in enumerate(neighbors_indices):
-            neighbors_x = self.x[indices,...]
             neighbors_y = self.y[indices,...]
-            w = least_square(neighbors_y, build_matrix(neighbors_x))
-            result.append(build_matrix(x[np.newaxis, i]).dot(w))
+            result.append(np.mean(neighbors_y))
+
+
         return normalize_axis(np.squeeze(np.array(result)))
     
     def _plot2d(self):
         plt.figure()
         plt.xlabel('X')
         plt.ylabel('y')
-        plt.scatter(self.x, self.y, s=2, label="Origin")
+        plt.scatter(self.x, self.y, s=2)
 
         new_x = np.arange(min(self.x), max(self.x), 0.001)
         new_y = self.predict(new_x)
-        plt.scatter(new_x, new_y, c='r',s=0.5, label="Predicted")
-        plt.legend()
+        plt.scatter(new_x, new_y, c='r',s=0.5)
         plt.show()
     def _plot3d(self):
         ax = plt.axes(projection='3d')
-        ax.set_xlabel('$x_1$')
-        ax.set_ylabel('$x_2$')
+        ax.set_xlabel('$x_0$')
+        ax.set_ylabel('$x_1$')
         ax.set_zlabel('$y$')
         x0 = self.x[:, 0]
         x1 = self.x[:, 1]
 
-        ax.scatter(x0, x1, self.y, c=self.y, cmap='Reds', marker='o', label="Origin")
+        ax.scatter(x0, x1, self.y, c=self.y, cmap='Reds', marker='o')
         x0_range = np.arange(min(x0), max(x0), 0.1)
         x1_range = np.arange(min(x1), max(x1), 0.1)
 
@@ -99,8 +98,7 @@ class KNN_linear_regressor(object):
                 new_x.append([x0, x1])
         new_x = np.array(new_x)
         new_y = self.predict(new_x)
-        ax.scatter(new_x[:,0], new_x[:,1], new_y, c=new_y, cmap='Blues', marker='o', s=1, label="Predicted")
-        plt.legend()
+        ax.scatter(new_x[:,0], new_x[:,1], new_y, c=new_y, cmap='Blues', marker='o', s=1)
         plt.show()
     def plot_fig(self):
         if not isinstance(self.x, np.ndarray):
@@ -111,14 +109,14 @@ class KNN_linear_regressor(object):
             self._plot3d()
 
 if __name__ == "__main__":
-    x, y = load_npz('./data2.npz')
+    x, y = load_npz('./data1.npz')
     (x_train, y_train), (x_test, y_test) = split_data(x, y)
 
     start_n = 5
     end_n = 30
     losses = []
     for n in range(start_n, end_n + 1):
-        knn_reg = KNN_linear_regressor(n)
+        knn_reg = KNN_nonlinear_regressor(n)
         knn_reg.fit(x_train, y_train)
         y_predict = knn_reg.predict(x_test)
         losses.append(mse_loss(y_predict, y_test))
@@ -127,8 +125,6 @@ if __name__ == "__main__":
     plt.ylabel('MSE Error')
     plt.xlabel('neighbor')
     plt.show()
-    knn_reg = KNN_linear_regressor(20)
+    knn_reg = KNN_nonlinear_regressor(20)
     knn_reg.fit(x, y)
     knn_reg.plot_fig()
-
-    
